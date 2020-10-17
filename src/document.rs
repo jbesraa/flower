@@ -9,9 +9,9 @@ pub struct Document {
 }
 
 impl Document {
-    pub fn open(filename: &str) -> Result<Self, std::io::Error> {
-        let contents = fs::read_to_string(filename)?;
-        let mut rows = Vec::new();
+    pub(crate) fn open(filename: &str) -> Result<Self, std::io::Error> {
+        let contents: String = fs::read_to_string(filename)?;
+        let mut rows: Vec<Row> = Vec::new();
         for value in contents.lines() {
             rows.push(Row::from(value));
         }
@@ -21,25 +21,33 @@ impl Document {
         })
     }
 
-    pub fn is_empty(&self) -> bool {
+    #[must_use] pub fn is_empty(&self) -> bool {
         self.rows.is_empty()
     }
 
-    pub fn row(&self, index: usize) -> Option<&Row> {
+    #[must_use] pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
     }
 
-    pub fn len(&self) -> usize {
+    #[must_use] pub fn len(&self) -> usize {
         self.rows.len()
     }
     pub fn insert(&mut self, at: &Position, c: char) {
-        if at.y == self.len() {
-            let mut row = Row::default();
+				let y_position = at.y;
+        if y_position == self.len() {
+            let mut row: Row = Row::default();
             row.insert(0, c);
             self.rows.push(row);
-        } else if at.y < self.len() {
-            let row = self.rows.get_mut(at.y).unwrap();
-            row.insert(at.x, c)
+        } else if y_position < self.len() {
+            let row: &mut Row = self.rows.get_mut(at.y).unwrap();
+            row.insert(at.x, c);
         }
-    }
+		}
+		pub fn delete(&mut self, at: &Position) {
+			if at.y >= self.len() { 
+				return;
+			}
+			let row = self.rows.get_mut(at.y).unwrap();
+			row.delete(at.x);
+		}
 }

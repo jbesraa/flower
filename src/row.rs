@@ -19,7 +19,7 @@ impl From<&str> for Row {
 }
 
 impl Row {
-    pub fn render(&self, start: usize, end: usize) -> String {
+    #[must_use] pub fn render(&self, start: usize, end: usize) -> String {
         let end = cmp::min(end, self.string.len());
         let start = cmp::min(start, end);
         let mut result = String::new();
@@ -37,10 +37,10 @@ impl Row {
         result
     }
 
-    pub fn len(&self) -> usize {
+    #[must_use] pub fn len(&self) -> usize {
         self.string[..].graphemes(true).count()
     }
-    pub fn is_empty(&self) -> bool {
+    #[must_use] pub fn is_empty(&self) -> bool {
         self.len == 0
     }
     fn update_len(&mut self) {
@@ -51,11 +51,23 @@ impl Row {
             self.string.push(c);
         } else {
             let mut result: String = self.string[..].graphemes(true).take(at).collect();
-            let mut remainder: String = self.string[..].graphemes(true).skip(at).collect();
+            let remainder: String = self.string[..].graphemes(true).skip(at).collect();
             result.push(c);
             result.push_str(&remainder);
             self.string = result;
         }
         self.update_len();
-    }
+		}
+		pub fn delete(&mut self, at: usize){
+			if at >= self.len() {
+				return;
+			} else {
+        let mut result: String = self.string[..].graphemes(true).take(at).collect();
+				let remainder: String = self.string[..].graphemes(true).skip(at + 1).collect();
+				result.push_str(&remainder);
+				self.string = result;
+			}
+
+			self.update_len();
+		}
 }
