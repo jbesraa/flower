@@ -1,5 +1,6 @@
 use crate::Position;
 use crate::Row;
+use std::io::{Error, Write};
 use std::fs;
 
 #[derive(Default)]
@@ -56,6 +57,17 @@ impl Document {
             let row: &mut Row = self.rows.get_mut(at.y).unwrap();
             row.insert(at.x, c);
         }
+    }
+
+    pub fn save(&self) -> Result<(), Error> {
+        if let Some(file_name) = &self.file_name {
+            let mut file = fs::File::create(file_name)?;
+            for row in &self.rows {
+                file.write_all(row.as_bytes())?;
+                file.write_all(b"\n")?;
+            }
+        }
+        Ok(())
     }
 
     pub fn delete(&mut self, at: &Position) {
