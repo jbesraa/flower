@@ -1,4 +1,5 @@
-#![warn(clippy::all, clippy::pedantic)]
+#![warn(clippy::all)]
+    
 mod document;
 mod editor;
 mod row;

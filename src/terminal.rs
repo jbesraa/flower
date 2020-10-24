@@ -13,10 +13,9 @@ pub struct Terminal {
 	size: Size,
 	_stdout: RawTerminal<std::io::Stdout>,
 }
-
 impl Terminal {
 	pub fn default() -> Result<Self, std::io::Error> {
-		let size = termion::terminal_size()?;
+		let size: (u16, u16) = termion::terminal_size()?;
 
 		Ok(Self {
 			size: Size {
@@ -27,7 +26,7 @@ impl Terminal {
 		})
 	}
 
-	pub fn size(&self) -> &Size {
+	#[must_use] pub fn size(&self) -> &Size {
 		&self.size
 	}
 
