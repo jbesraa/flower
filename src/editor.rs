@@ -73,7 +73,7 @@ impl Editor {
         Self {
             terminal: Terminal::default().expect("Failed to initialize terminal"),
             should_quit: false,
-            cursor_position: Position::default(),
+            cursor_position: Position { x: 10, y: 0 },
             document,
             offset: Position::default(),
             status_message: StatusMessage::from(initial_status),
@@ -172,10 +172,10 @@ impl Editor {
                         self.quit_times
                     ));
                     self.quit_times -= 1;
-                    return Ok(())
+                    return Ok(());
                 }
                 self.should_quit = true
-            },
+            }
             Key::Ctrl('s') => self.save(),
             Key::Char(c) => {
                 self.document.insert(&self.cursor_position, c);
@@ -295,7 +295,7 @@ impl Editor {
         }
     }
 
-    fn prompt(&mut self, prompt: &str) -> Result<Option<String>,std::io::Error> {
+    fn prompt(&mut self, prompt: &str) -> Result<Option<String>, std::io::Error> {
         let mut result = String::new();
         loop {
             self.status_message = StatusMessage::from(format!("{}{}", prompt, result));
@@ -318,7 +318,7 @@ impl Editor {
                 }
                 _ => (),
             }
-            }
+        }
         self.status_message = StatusMessage::from(String::new());
         if result.is_empty() {
             return Ok(None);
