@@ -73,7 +73,7 @@ impl Editor {
         Self {
             terminal: Terminal::default().expect("Failed to initialize terminal"),
             should_quit: false,
-            cursor_position: Position { x: 10, y: 0 },
+            cursor_position: Position {x: 20, y:0},
             document,
             offset: Position::default(),
             status_message: StatusMessage::from(initial_status),
@@ -221,17 +221,19 @@ impl Editor {
 
         let height = self.document.len();
         let mut width = match self.document.row(y) {
-            Some(row) => row.len(),
-            None => 0,
+            Some(row) => row.len() + 20,
+            None => 20,
         };
 
         match key {
             Key::Up => y = y.saturating_sub(1),
+
             Key::Down => {
                 if y < height {
                     y = y.saturating_add(1)
                 }
             }
+
             Key::Left => {
                 if x > 0 {
                     x -= 1;
@@ -244,6 +246,7 @@ impl Editor {
                     }
                 }
             }
+
             Key::Right => {
                 if x < width {
                     x += 1;
@@ -254,15 +257,18 @@ impl Editor {
             }
             _ => (),
         }
+
         width = match self.document.row(y) {
-            Some(row) => row.len(),
-            None => 0,
+            Some(row) => row.len() + 20,
+            None => 20,
         };
         if x > width {
             x = width
         }
+
         self.cursor_position = Position { x, y }
     }
+
     fn draw_welcome_message(&self) {
         let mut welcome_message = format!("Flower editor -- version {}", VERSION);
         let width = self.terminal.size().width as usize;
@@ -273,6 +279,7 @@ impl Editor {
         welcome_message.truncate(width);
         println!("{}\r", welcome_message);
     }
+
     pub fn draw_row(&self, row: &Row) {
         let width = self.terminal.size().width as usize;
         let start = self.offset.x;

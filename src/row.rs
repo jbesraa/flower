@@ -1,4 +1,4 @@
-use std::cmp;
+use std::{cmp};
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Default)]
@@ -23,15 +23,19 @@ impl Row {
         let end = cmp::min(end, self.string.len());
         let start = cmp::min(start, end);
         let mut result = String::new();
+        let spaces = " ".repeat(20);
         for grapheme in self.string[..]
             .graphemes(true)
             .skip(start)
             .take(end - start)
         {
+            if result.is_empty() {
+                result.push_str(&&spaces.to_string());
+            }
             if grapheme == "\t" {
                 result.push_str(" ");
             } else {
-                result.push_str(grapheme)
+                result.push_str(grapheme);
             }
         }
         result
